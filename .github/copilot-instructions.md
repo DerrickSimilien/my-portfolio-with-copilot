@@ -48,3 +48,4 @@
 - This is an educational repository for learning GitHub Copilot
 - Code should be clear and demonstrative, optimized for learning
 - Include helpful comments that explain the "why" not just the "what"
+
