@@ -37,7 +37,7 @@ export default function Home() {
           </Link>
 
           <Link
-            href="/practice/module-4-workspace-context"
+            href="/practice/module-4-rules"
             className="block p-6 bg-white rounded-lg shadow hover:shadow-lg transition-shadow"
           >
             <h2 className="text-2xl font-semibold mb-2">Module 4: Rules & Context</h2>
