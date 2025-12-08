@@ -1,5 +1,7 @@
 'use client'
 
+import React from 'react'
+
 /**
  * MODULE 4: Project Rules (Teaching Copilot Your Style)
  *
