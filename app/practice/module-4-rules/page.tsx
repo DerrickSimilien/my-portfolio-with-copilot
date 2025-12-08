@@ -84,6 +84,113 @@ export default function Module4Practice() {
             </ul>
 
             {/* Practice area for Copilot (Agent Mode) generation */}
+
+            type LoginCredentials = {
+              email: string
+              password: string
+            }
+
+            const LoginForm = () => {
+              // Basic HTML5-driven validation + a small submit handler that reads form values.
+              const handleSubmit = (e: any) => {
+                e.preventDefault()
+                const form = e.currentTarget as HTMLFormElement
+
+                // Use the browser's validation UI when invalid
+                if (!form.checkValidity()) {
+                  form.reportValidity()
+                  return
+                }
+
+                const fd = new FormData(form)
+                const creds: LoginCredentials = {
+                  email: String(fd.get('email') ?? ''),
+                  password: String(fd.get('password') ?? ''),
+                }
+
+                // Simulate submission (replace with real API call)
+                const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null
+                if (submitBtn) {
+                  submitBtn.disabled = true
+                  const prevText = submitBtn.textContent
+                  submitBtn.textContent = 'Signing in...'
+                  setTimeout(() => {
+                    // In a real app handle success/error and show feedback
+                    // Keeping it simple for the practice area
+                    alert(`Demo sign-in for ${creds.email}`)
+                    submitBtn.disabled = false
+                    submitBtn.textContent = prevText
+                    form.reset()
+                  }, 800)
+                }
+              }
+
+              return (
+                <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow">
+                  <h3 className="text-xl font-semibold mb-4">Sign in to your account</h3>
+
+                  <form onSubmit={handleSubmit} noValidate>
+                    <div className="mb-4">
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
+                        Email
+                      </label>
+                      <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        aria-describedby="email-help"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="you@example.com"
+                      />
+                      <p id="email-help" className="text-xs text-gray-500 mt-1">
+                        We'll never share your email.
+                      </p>
+                    </div>
+
+                    <div className="mb-4">
+                      <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-1">
+                        Password
+                      </label>
+                      <input
+                        id="password"
+                        name="password"
+                        type="password"
+                        required
+                        minLength={8}
+                        aria-describedby="password-help"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400"
+                        placeholder="Enter at least 8 characters"
+                      />
+                      <p id="password-help" className="text-xs text-gray-500 mt-1" role="note">
+                        Minimum 8 characters.
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between">
+                      <button
+                        type="submit"
+                        className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60"
+                        aria-label="Sign in"
+                      >
+                        Sign in
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => alert('Password reset flow (demo)')}
+                        className="text-sm text-blue-600 hover:underline ml-4"
+                        aria-label="Forgot password"
+                      >
+                        Forgot?
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              )
+            }
+
+            <LoginForm />
           </div>
         </section>
 
@@ -115,6 +222,248 @@ export default function Module4Practice() {
               After each generation, check for rule adherence (arrow functions, typed props, Tailwind rhythm, minimal comments). If anything drifts,
               adjust <code>.github/copilot-instructions.md</code> and retry the task.
             </p>
+          </div>
+
+          interface NotificationBadgeProps {
+            count: number
+            maxCount?: number
+            size?: 'sm' | 'md' | 'lg'
+            ariaLabel?: string
+          }
+
+          /**
+           * NotificationBadge
+           * - Shows numeric count, switching to "max+" when over the maxCount threshold.
+           * - Accessible: role=status + aria-live to announce updates to assistive tech.
+           */
+          const NotificationBadge: React.FC<NotificationBadgeProps> = ({
+            count,
+            maxCount = 99,
+            size = 'md',
+            ariaLabel,
+          }) => {
+            const display = count > maxCount ? `${maxCount}+` : String(count)
+
+            const sizeClasses =
+              size === 'sm'
+                ? 'text-xs px-2 h-5 min-w-[1.25rem]'
+                : size === 'lg'
+                ? 'text-sm px-3 h-7 min-w-[1.75rem]'
+                : 'text-sm px-2.5 h-6 min-w-[1.5rem]'
+
+            return (
+              <span
+                role="status"
+                aria-live="polite"
+                aria-label={ariaLabel ?? `${display} notifications`}
+                className={`inline-flex items-center justify-center rounded-full bg-red-600 text-white font-semibold ${sizeClasses}`}
+              >
+                {display}
+              </span>
+            )
+          }
+
+          /* Example usages demonstrating different sizes and threshold behavior */
+          <div className="flex items-center space-x-4 mt-4">
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-700">Messages</span>
+              <NotificationBadge count={3} />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-700">Alerts</span>
+              <NotificationBadge count={120} maxCount={99} />
+            </div>
+
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-700">Tasks</span>
+              <NotificationBadge count={42} size="lg" />
+            </div>
+          </div>
+
+          interface ProgressBarProps {
+            value: number // 0-100
+            label?: string
+            ariaLabel?: string
+          }
+
+          const ProgressBar: React.FC<ProgressBarProps> = ({ value, label, ariaLabel }) => {
+            // Clamp and normalize incoming value to a safe integer percent
+            const percent = React.useMemo(() => Math.max(0, Math.min(100, Math.round(value))), [value])
+
+            return (
+              <div className="w-full">
+                {label && (
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-sm font-medium text-gray-700">{label}</span>
+                    <span className="text-sm text-gray-600">{percent}%</span>
+                  </div>
+                )}
+
+                <div className="w-full bg-gray-200 rounded-md h-3 overflow-hidden">
+                  <div
+                    role="progressbar"
+                    aria-valuemin={0}
+                    aria-valuemax={100}
+                    aria-valuenow={percent}
+                    aria-label={ariaLabel ?? label ?? `Progress ${percent}%`}
+                    // dynamic width requires inline style
+                    style={{ width: `${percent}%` }}
+                    className="h-full bg-blue-600 transition-all duration-300"
+                  />
+                </div>
+              </div>
+            )
+          }
+
+          /* Example usages */
+          <div className="mt-4 space-y-4">
+            <ProgressBar label="Upload" value={18} />
+            <ProgressBar label="Processing" value={64} />
+            <ProgressBar label="Finalizing" value={100} />
+
+            interface ModalDialogProps {
+              open: boolean
+              onClose: () => void
+              title?: string
+              children?: React.ReactNode
+            }
+
+            /**
+             * ModalDialog
+             * - Simple, accessible modal with overlay click-to-close and Escape-to-close support.
+             * - Focuses the close button when opened and locks body scroll.
+             */
+            const ModalDialog: React.FC<ModalDialogProps> = ({ open, onClose, title, children }) => {
+              const overlayRef = React.useRef<HTMLDivElement | null>(null)
+              const closeBtnRef = React.useRef<HTMLButtonElement | null>(null)
+
+              // Close on Escape
+              React.useEffect(() => {
+                if (!open) return
+                const onKey = (e: KeyboardEvent) => {
+                  if (e.key === 'Escape') onClose()
+                }
+                document.addEventListener('keydown', onKey)
+                return () => document.removeEventListener('keydown', onKey)
+              }, [open, onClose])
+
+              // Lock body scroll while modal is open
+              React.useEffect(() => {
+                if (open) {
+                  const prev = document.body.style.overflow
+                  document.body.style.overflow = 'hidden'
+                  return () => {
+                    document.body.style.overflow = prev
+                  }
+                }
+                return
+              }, [open])
+
+              // Focus close button when opened
+              React.useEffect(() => {
+                if (open) {
+                  closeBtnRef.current?.focus()
+                }
+              }, [open])
+
+              if (!open) return null
+
+              const onOverlayClick = (e: React.MouseEvent) => {
+                if (e.target === overlayRef.current) onClose()
+              }
+
+              return (
+                <div
+                  ref={overlayRef}
+                  onMouseDown={onOverlayClick}
+                  className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+                  aria-hidden={false}
+                >
+                  <div
+                    role="dialog"
+                    aria-modal="true"
+                    aria-labelledby={title ? 'modal-title' : undefined}
+                    className="bg-white w-full max-w-lg rounded-lg shadow-lg ring-1 ring-black/5"
+                  >
+                    <div className="flex items-start justify-between p-4 border-b">
+                      {title ? <h3 id="modal-title" className="text-lg font-semibold text-gray-800">{title}</h3> : <span />}
+                      <button
+                        ref={closeBtnRef}
+                        onClick={onClose}
+                        aria-label="Close dialog"
+                        className="ml-4 inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
+                          <path fillRule="evenodd" d="M10 8.586l4.95-4.95 1.414 1.414L11.414 10l4.95 4.95-1.414 1.414L10 11.414l-4.95 4.95-1.414-1.414L8.586 10 3.636 5.05 5.05 3.636 10 8.586z" clipRule="evenodd" />
+                        </svg>
+                      </button>
+                    </div>
+
+                    <div className="p-4">
+                      {children}
+                    </div>
+                  </div>
+                </div>
+              )
+            }
+
+            /* Example usage demonstrating open/close state and the close button */
+            const ModalExample = () => {
+              const [isOpen, setIsOpen] = React.useState(false)
+              const open = React.useCallback(() => setIsOpen(true), [])
+              const close = React.useCallback(() => setIsOpen(false), [])
+
+              return (
+                <div className="mt-2">
+                  <div className="flex items-center space-x-2">
+                    <button
+                      onClick={open}
+                      className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800"
+                      aria-haspopup="dialog"
+                      aria-expanded={isOpen}
+                    >
+                      Open Modal
+                    </button>
+
+                    <button
+                      onClick={() => alert('Another action')}
+                      className="px-3 py-2 rounded-md border text-gray-700"
+                    >
+                      Another action
+                    </button>
+                  </div>
+
+                  <ModalDialog open={isOpen} onClose={close} title="Example Modal">
+                    <p className="text-sm text-gray-700">
+                      This modal demonstrates open/close state, a visible close button, overlay click-to-close, and Escape handling.
+                    </p>
+
+                    <div className="mt-4 flex justify-end space-x-2">
+                      <button
+                        onClick={close}
+                        className="px-3 py-2 rounded-md bg-gray-100 text-gray-700 hover:bg-gray-200"
+                      >
+                        Cancel
+                      </button>
+
+                      <button
+                        onClick={() => {
+                          // placeholder for confirm action
+                          alert('Confirmed (demo)')
+                          close()
+                        }}
+                        className="px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700"
+                      >
+                        Confirm
+                      </button>
+                    </div>
+                  </ModalDialog>
+                </div>
+              )
+            }
+
+            <ModalExample />
           </div>
         </section>
 

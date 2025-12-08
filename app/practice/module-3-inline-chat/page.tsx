@@ -141,31 +141,28 @@ export default function Module3Practice() {
  * 🔄 PROMISE-BASED COMPONENT
  * Refactor this to use async/await!
  * ========================================== */
-function PromiseBasedComponent() {
+const PromiseBasedComponent = () => {
   const [data, setData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // This uses .then() chains - convert it to async/await!
-  const fetchUserData = () => {
+  // Converted to async/await with try/catch/finally
+  const fetchUserData = async () => {
     setLoading(true)
     setError(null)
 
-    fetch('https://jsonplaceholder.typicode.com/users/1')
-      .then(response => {
-        if (!response.ok) {
-          throw new Error('Network response was not ok')
-        }
-        return response.json()
-      })
-      .then(userData => {
-        setData(userData)
-        setLoading(false)
-      })
-      .catch(err => {
-        setError(err.message)
-        setLoading(false)
-      })
+    try {
+      const response = await fetch('https://jsonplaceholder.typicode.com/users/1')
+      if (!response.ok) {
+        throw new Error('Network response was not ok')
+      }
+      const userData = await response.json()
+      setData(userData)
+    } catch (err: any) {
+      setError(err?.message ?? 'An unknown error occurred')
+    } finally {
+      setLoading(false)
+    }
   }
 
   return (
@@ -252,13 +249,8 @@ function InaccessibleForm() {
         <div style={{ marginTop: '12px' }}>
           <button
             type="submit"
-            style={{
-              background: '#3B82F6',
-              color: 'white',
-              padding: '8px 16px',
-              border: 'none',
-              borderRadius: '4px',
-            }}
+            aria-label="Submit Form"
+            className="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-md shadow-md focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 transition-colors"
           >
             Submit
           </button>
@@ -269,9 +261,40 @@ function InaccessibleForm() {
 }
 
 /* ==========================================
- * 🧹 MESSY COMPONENT
- * Refactor this into smaller, clearer functions!
+ * 🧹 MESSY COMPONENT - REFACTORED VERSION
+ * Now broken into smaller, clearer functions!
  * ========================================== */
+
+// Helper: Filters items by selected category
+// Returns true when the item matches the selected category (empty filter means "all")
+const filterByCategory = (item: any, filter: string) => {
+  if (filter === '') return true
+  return item.category.toLowerCase() === filter.toLowerCase()
+}
+
+// Helper: Returns only items that are in stock
+const filterInStock = (item: any) => {
+  return item.inStock
+}
+
+// Helper: Returns a sort comparator function based on the sort key
+const sortByKey = (sortKey: string) => (a: any, b: any) => {
+  if (sortKey === 'name') {
+    return a.name.localeCompare(b.name)
+  } else if (sortKey === 'price') {
+    return a.price - b.price
+  }
+  return 0
+}
+
+// Helper: Adds pricing calculations and formatting to each item
+const enrichItem = (item: any) => {
+  const discountedPrice = item.price > 2 ? item.price * 0.9 : item.price
+  const formattedPrice = `$${discountedPrice.toFixed(2)}`
+  const isOnSale = item.price > 2
+  return { ...item, discountedPrice, formattedPrice, isOnSale }
+}
+
 function MessyComponent() {
   const [items, setItems] = useState([
     { id: 1, name: 'Apple', category: 'Fruit', price: 1.5, inStock: true },
@@ -282,33 +305,17 @@ function MessyComponent() {
   const [filter, setFilter] = useState('')
   const [sort, setSort] = useState('name')
 
-  // This is too long and does too many things - break it down!
+  // Clean, readable processing pipeline using helper functions
   const processedItems = items
-    .filter(item => {
-      if (filter === '') return true
-      return item.category.toLowerCase() === filter.toLowerCase()
-    })
-    .filter(item => item.inStock)
-    .sort((a, b) => {
-      if (sort === 'name') {
-        return a.name.localeCompare(b.name)
-      } else if (sort === 'price') {
-        return a.price - b.price
-      }
-      return 0
-    })
-    .map(item => {
-      const discountedPrice = item.price > 2 ? item.price * 0.9 : item.price
-      const formattedPrice = `$${discountedPrice.toFixed(2)}`
-      const isOnSale = item.price > 2
-      return { ...item, discountedPrice, formattedPrice, isOnSale }
-    })
+    .filter(item => filterByCategory(item, filter))
+    .filter(filterInStock)
+    .sort(sortByKey(sort))
+    .map(enrichItem)
 
   return (
     <div className="space-y-4">
       <p className="text-gray-600">
-        This component does too much in one place. Highlight it and ask Copilot to break it into
-        smaller functions!
+        This component has been refactored! The complex logic is now broken into smaller, focused helper functions.
       </p>
 
       <div className="grid grid-cols-2 gap-4">
