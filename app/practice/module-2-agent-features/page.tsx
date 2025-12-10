@@ -22,125 +22,29 @@ export default function Module2Practice() {
         </header>
 
         <div className="space-y-8">
-          {/* ==========================================
-           * 🔧 LESSON 2.1 - EXERCISE: FIX BROKEN CODE
-           * ==========================================
-           *
-           * ✅ TODO: FIX THE BROKEN CODE BELOW USING /fix
-           *
-           * Instructions:
-           * 1. Highlight the BrokenCalculator component below
-           * 2. Press Ctrl/Cmd + I to open Inline Chat
-           * 3. Type: /fix
-           * 4. Review the patch and accept it
-           * 5. Follow up with: "Explain what was wrong originally"
-           *
-           * The code has several intentional bugs - let Copilot find and fix them!
-           *
-           * ========================================== */}
           <section className="bg-white p-6 rounded-lg shadow border-2 border-red-500">
             <h2 className="text-2xl font-semibold mb-4">🔧 Lesson 2.1: Fix Broken Code</h2>
             <BrokenCalculator />
           </section>
 
-          {/* ==========================================
-           * ➕ LESSON 2.2 - EXERCISE: ADD A FEEDBACK FORM
-           * ==========================================
-           *
-           * ✅ TODO: ADD A FEEDBACK FORM HERE
-           *
-           * Instructions:
-           * 1. Place your cursor after this comment block
-           * 2. Press Ctrl/Cmd + I to open Inline Chat
-           * 3. Type: "Create a form with name, email, and message fields"
-           * 4. Review the generated code
-           * 5. Refine with follow-ups:
-           *    - "Style it with Tailwind"
-           *    - "Disable submit until all fields are filled"
-           *    - "Add validation for email format"
-           *
-           * ========================================== */}
           <section className="bg-white p-6 rounded-lg shadow border-2 border-green-500">
             <h2 className="text-2xl font-semibold mb-4">➕ Lesson 2.2: Add a Feedback Form</h2>
             <p className="text-gray-600 mb-4">Use Agent Mode to create a form component below:</p>
-
-            {/* 
-            
-            ⬇️⬇️⬇️ CREATE YOUR FEEDBACK FORM HERE ⬇️⬇️⬇️
-            
-            Hint: Start with a comment like:
-            // TODO: Add a feedback form
-            
-            Then use Copilot to generate it!
-            
-            */}
           </section>
 
-          {/* ==========================================
-           * 🧪 LESSON 2.3 - EXERCISE: WRITE TESTS
-           * ==========================================
-           *
-           * ✅ TODO: GENERATE TESTS FOR THE FUNCTION BELOW
-           *
-           * Instructions:
-           * 1. Highlight the calculateDiscount function
-           * 2. Press Ctrl/Cmd + I to open Inline Chat
-           * 3. Type: /tests
-           * 4. Review the generated test suite
-           * 5. Add a new parameter to the function
-           * 6. Ask: "Update the tests to cover the new parameter"
-           *
-           * ========================================== */}
           <section className="bg-white p-6 rounded-lg shadow border-2 border-purple-500">
             <h2 className="text-2xl font-semibold mb-4">🧪 Lesson 2.3: Write Tests</h2>
             <TestableComponent />
           </section>
 
-          {/* ==========================================
-           * 💬 LESSON 2.4 - EXERCISE: FREEFORM CONVERSATIONS
-           * ==========================================
-           *
-           * ✅ TODO: ASK COPILOT QUESTIONS ABOUT THE CODE BELOW
-           *
-           * Instructions:
-           * 1. Highlight the UserDashboard component
-           * 2. Open Copilot Chat (Ctrl/Cmd + Shift + I)
-           * 3. Try these Ask Mode questions:
-           *    - "What are potential performance issues here?"
-           *    - "How would you refactor this into smaller functions?"
-           *    - "What security risks might exist in this component?"
-           *    - "How can I make this more accessible?"
-           *
-           * ========================================== */}
           <section className="bg-white p-6 rounded-lg shadow border-2 border-blue-500">
             <h2 className="text-2xl font-semibold mb-4">💬 Lesson 2.4: Freeform Conversations</h2>
             <UserDashboard />
           </section>
 
-          {/* ==========================================
-           * 🎨 CHALLENGE: CREATE A PRICING CARD
-           * ==========================================
-           *
-           * ✅ TODO: BUILD A PRICING CARD COMPONENT
-           *
-           * Instructions:
-           * 1. Start simple: "Create a PricingCard with title, price, and description"
-           * 2. Iterate and refine:
-           *    - "Add a Pro plan that's highlighted"
-           *    - "Make the layout responsive on mobile"
-           *    - "Add a list of features for each plan"
-           *    - "Add hover effects"
-           *
-           * ========================================== */}
           <section className="bg-white p-6 rounded-lg shadow border-2 border-yellow-500">
             <h2 className="text-2xl font-semibold mb-4">🎨 Challenge: Pricing Card</h2>
             <p className="text-gray-600 mb-4">Use Agent Mode to build a pricing card component:</p>
-
-            {/* 
-            
-            ⬇️⬇️⬇️ CREATE YOUR PRICING CARD HERE ⬇️⬇️⬇️
-            
-            */}
           </section>
         </div>
       </div>
@@ -148,24 +52,24 @@ export default function Module2Practice() {
   )
 }
 
-/* ==========================================
- * 🔧 BROKEN CALCULATOR COMPONENT
- * This component has intentional bugs for you to fix!
- * ========================================== */
 function BrokenCalculator() {
   const [num1, setNum1] = useState('')
   const [num2, setNum2] = useState('')
   const [result, setResult] = useState(0)
 
-  // Bug: This function has issues with type conversion and error handling
   const calculate = () => {
-    const sum = num1 + num2 // Bug: String concatenation instead of addition
+    const sum = Number(num1) + Number(num2)
     setResult(sum)
   }
 
-  // Bug: Missing divide by zero check
   const divide = () => {
-    setResult(num1 / num2)
+    const n1 = Number(num1)
+    const n2 = Number(num2)
+    if (n2 === 0) {
+      alert('Cannot divide by zero')
+      return
+    }
+    setResult(n1 / n2)
   }
 
   return (
@@ -207,10 +111,6 @@ function BrokenCalculator() {
   )
 }
 
-/* ==========================================
- * 🧪 TESTABLE COMPONENT
- * Use /tests to generate tests for these functions
- * ========================================== */
 function TestableComponent() {
   const [price, setPrice] = useState(100)
   const [discount, setDiscount] = useState(10)
@@ -245,7 +145,6 @@ function TestableComponent() {
   )
 }
 
-// Function to test - highlight this and use /tests
 function calculateDiscount(price: number, discountPercent: number): number {
   if (price < 0 || discountPercent < 0 || discountPercent > 100) {
     return price
@@ -254,10 +153,6 @@ function calculateDiscount(price: number, discountPercent: number): number {
   return price - discountAmount
 }
 
-/* ==========================================
- * 💬 USER DASHBOARD COMPONENT
- * Ask Copilot questions about this code!
- * ========================================== */
 function UserDashboard() {
   const [users] = useState([
     {
