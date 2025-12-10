@@ -2,8 +2,6 @@
 
 import React, { useState } from 'react'
 
-// Provide a minimal JSX namespace so TypeScript can recognize intrinsic elements
-// (This is a small shim useful when project JSX types are not configured or @types/react is missing)
 declare global {
   namespace JSX {
     interface IntrinsicElements {
@@ -11,13 +9,6 @@ declare global {
     }
   }
 }
-
-/**
- * MODULE 1: Setup & Orientation
- *
- * This file contains exercises for your first interaction with GitHub Copilot.
- * Look for the bold comments below to know where to practice!
- */
 
 export default function Module1Practice() {
   return (
@@ -29,65 +20,26 @@ export default function Module1Practice() {
         </header>
 
         <div className="space-y-8">
-          {/* Exercise 1: Simple Component */}
           <section className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-2xl font-semibold mb-4">Exercise 1: Explain Simple Code</h2>
             <SimpleCounter />
           </section>
 
-          {/* Exercise 2: Data Transformation */}
           <section className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-2xl font-semibold mb-4">Exercise 2: Explain Data Flow</h2>
             <DataTransformer />
           </section>
 
-          {/* ==========================================
-           * 📚 LESSON 1.3 - EXERCISE 3: EXPLAIN COMPLEX CODE
-           * ==========================================
-           *
-           * ✅ TODO: HIGHLIGHT THE FUNCTION BELOW AND USE /explain
-           *
-           * Instructions:
-           * 1. Highlight the entire ComplexFilter component below
-           * 2. Press Ctrl/Cmd + I to open Inline Chat
-           * 3. Type: /explain
-           * 4. Read Copilot's explanation
-           * 5. Try follow-up questions like:
-           *    - "Explain it as if I'm new to React"
-           *    - "List the steps this function performs"
-           *
-           * ========================================== */}
           <section className="bg-white p-6 rounded-lg shadow">
             <h2 className="text-2xl font-semibold mb-4">Exercise 3: Explain Complex Code</h2>
             <ComplexFilter />
           </section>
 
-          {/* ==========================================
-           * 🎯 PRACTICE AREA: USE COPILOT SUGGESTIONS HERE
-           * ==========================================
-           *
-           * ✅ TODO: TRY COPILOT SUGGESTIONS HERE
-           *
-           * Instructions:
-           * 1. Uncomment the component below
-           * 2. Start typing inside the function body
-           * 3. Watch for gray "ghost text" suggestions
-           * 4. Press Tab to accept, Esc to dismiss
-           * 5. Try Alt/Option + ] or [ to cycle suggestions
-           *
-           * Example: Type "const [count" and see what Copilot suggests
-           *
-           * ========================================== */}
           <section className="bg-white p-6 rounded-lg shadow border-2 border-blue-500">
             <h2 className="text-2xl font-semibold mb-4">🎯 Your Practice Area</h2>
             <p className="text-gray-600 mb-4">
               Create a simple component below and experiment with Copilot suggestions
             </p>
-            {/* UNCOMMENT AND PRACTICE HERE:
-            
-            <YourPracticeComponent />
-            
-            */}
           </section>
         </div>
       </div>
@@ -95,7 +47,6 @@ export default function Module1Practice() {
   )
 }
 
-// Simple counter component for Exercise 1
 function SimpleCounter() {
   const [count, setCount] = useState(0)
 
@@ -120,15 +71,14 @@ function SimpleCounter() {
   )
 }
 
-// Data transformation component for Exercise 2
 const DataTransformer: React.FC<{ multiplier?: number }> = ({ multiplier = 2 }) => {
   const [numbers] = useState<number[]>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
 
   const evenNumbers = React.useMemo(() => numbers.filter((n: number) => n % 2 === 0), [numbers])
   const doubledNumbers = React.useMemo(
-    () => evenNumbers.map((n: number) => n * multiplier), // Changed from * 2
+    () => evenNumbers.map((n: number) => n * multiplier),
     [evenNumbers, multiplier]
-  ) // Added multiplier to dependencies
+  )
   const sum = React.useMemo(
     () => doubledNumbers.reduce((acc: number, n: number) => acc + n, 0),
     [doubledNumbers]
@@ -247,21 +197,16 @@ const ComplexFilter: React.FC = () => {
   )
 }
 
-// Feedback form component with name, email, and message fields
-
 type FeedbackFormState = {
   name: string
   email: string
   message: string
 }
 
-// Refactored feedback form broken into small pieces: hook + presentational inputs
-
 const useFeedbackForm = (initial: FeedbackFormState = { name: '', email: '', message: '' }) => {
   const [form, setForm] = useState<FeedbackFormState>(initial)
   const [submitted, setSubmitted] = useState(false)
 
-  // Stable handler to update any input/textarea by name
   const handleChange = React.useCallback(
     (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const { name, value } = e.target
@@ -273,7 +218,6 @@ const useFeedbackForm = (initial: FeedbackFormState = { name: '', email: '', mes
   const handleSubmit = React.useCallback((e: React.FormEvent) => {
     e.preventDefault()
     setSubmitted(true)
-    // In a real app, send form data to server here
   }, [])
 
   return { form, submitted, handleChange, handleSubmit, setForm, setSubmitted }
@@ -288,6 +232,8 @@ type InputFieldProps = {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   required?: boolean
   ariaLabel?: string
+  pattern?: string
+  title?: string
 }
 
 const InputField: React.FC<InputFieldProps> = ({
@@ -299,6 +245,8 @@ const InputField: React.FC<InputFieldProps> = ({
   onChange,
   required = false,
   ariaLabel,
+  pattern,
+  title,
 }) => (
   <div>
     <label htmlFor={id} className="block mb-1 font-medium">
@@ -313,6 +261,8 @@ const InputField: React.FC<InputFieldProps> = ({
       onChange={onChange}
       required={required}
       aria-label={ariaLabel ?? label}
+      pattern={pattern}
+      title={title}
     />
   </div>
 )
@@ -336,7 +286,6 @@ const TextAreaWithCount: React.FC<TextAreaWithCountProps> = ({
   maxLength,
   rows = 4,
 }) => {
-  // Compute remaining chars and color hint
   const remaining = React.useMemo(() => maxLength - value.length, [maxLength, value.length])
   const countColor = React.useMemo(
     () => (remaining <= 20 ? 'text-red-600' : remaining <= 100 ? 'text-yellow-600' : 'text-gray-600'),
@@ -376,7 +325,7 @@ const FeedbackForm: React.FC = () => {
       className="space-y-4 max-w-md mx-auto mt-8 bg-white p-6 rounded-lg shadow"
       onSubmit={handleSubmit}
       aria-label="Feedback form"
-      noValidate // Prevent default browser validation
+      noValidate
     >
       <h2 className="text-xl font-semibold mb-2">Feedback Form</h2>
 
@@ -388,8 +337,8 @@ const FeedbackForm: React.FC = () => {
         onChange={handleChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
         required
         ariaLabel="Your name"
-        pattern="^[A-Za-z\s]+$" // Regex pattern for name validation
-        title="Please enter a valid name (letters and spaces only)." // Tooltip for invalid input
+        pattern="^[A-Za-z\s]+$"
+        title="Please enter a valid name (letters and spaces only)."
       />
 
       <InputField
@@ -401,8 +350,8 @@ const FeedbackForm: React.FC = () => {
         onChange={handleChange as (e: React.ChangeEvent<HTMLInputElement>) => void}
         required
         ariaLabel="Your email"
-        pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$" // Regex pattern for email validation
-        title="Please enter a valid email address." // Tooltip for invalid input
+        pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"
+        title="Please enter a valid email address."
       />
 
       <TextAreaWithCount
@@ -431,14 +380,12 @@ const FeedbackForm: React.FC = () => {
   )
 }
 
-// Pricing card component: title, price, description
 const PricingCard: React.FC<{
   title: string
   price: number | string
   description?: string
   featured?: boolean
 }> = ({ title, price, description, featured = false }) => {
-  // Format numeric prices as USD currency; leave strings as-is
   const formattedPrice = React.useMemo(() => {
     if (typeof price === 'number') {
       return new Intl.NumberFormat(undefined, {
@@ -492,7 +439,6 @@ const PricingCard: React.FC<{
   )
 }
 
-// Responsive usage example with Pro plan highlighted
 const PricingPlans: React.FC = () => (
   <div className="max-w-4xl mx-auto px-4 sm:px-6">
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -502,29 +448,3 @@ const PricingPlans: React.FC = () => (
     </div>
   </div>
 )
-
-/* ==========================================
- * 💡 ADDITIONAL PRACTICE SUGGESTIONS
- * ==========================================
- *
- * After completing the exercises above, try these:
- *
- * 1. Highlight any function and ask: "What are potential bugs here?"
-}
-          </div>
-        ))}
-      </div>
-
-      {filteredProducts.length === 0 && (
-        <p className="text-center text-gray-500">No products found</p>
-      )}
-    </div>
-  )
- * 2. Highlight SimpleCounter and ask: "How can I optimize this?"
- * 3. Highlight ComplexFilter and ask: "What accessibility improvements can I make?"
- * 4. Create your own component and use Copilot suggestions to help
- *
- * Remember: The more you interact with Copilot, the better you'll get at
- * prompting it effectively!
- *
- * ========================================== */
