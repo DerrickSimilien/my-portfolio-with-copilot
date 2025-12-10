@@ -29,7 +29,7 @@ interface NotificationBadgeProps {
 }
 
 interface ProgressBarProps {
-  value: number // 0-100
+  value: number
   label?: string
   ariaLabel?: string
 }
@@ -46,12 +46,10 @@ interface ModalDialogProps {
 // ============================================================================
 
 const LoginForm = () => {
-  // Basic HTML5-driven validation + a small submit handler that reads form values.
   const handleSubmit = (e: any) => {
     e.preventDefault()
     const form = e.currentTarget as HTMLFormElement
 
-    // Use the browser's validation UI when invalid
     if (!form.checkValidity()) {
       form.reportValidity()
       return
@@ -63,15 +61,12 @@ const LoginForm = () => {
       password: String(fd.get('password') ?? ''),
     }
 
-    // Simulate submission (replace with real API call)
     const submitBtn = form.querySelector('button[type="submit"]') as HTMLButtonElement | null
     if (submitBtn) {
       submitBtn.disabled = true
       const prevText = submitBtn.textContent
       submitBtn.textContent = 'Signing in...'
       setTimeout(() => {
-        // In a real app handle success/error and show feedback
-        // Keeping it simple for the practice area
         alert(`Demo sign-in for ${creds.email}`)
         submitBtn.disabled = false
         submitBtn.textContent = prevText
@@ -145,11 +140,6 @@ const LoginForm = () => {
   )
 }
 
-/**
- * NotificationBadge
- * - Shows numeric count, switching to "max+" when over the maxCount threshold.
- * - Accessible: role=status + aria-live to announce updates to assistive tech.
- */
 const NotificationBadge: React.FC<NotificationBadgeProps> = ({
   count,
   maxCount = 99,
@@ -178,7 +168,6 @@ const NotificationBadge: React.FC<NotificationBadgeProps> = ({
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ value, label, ariaLabel }) => {
-  // Clamp and normalize incoming value to a safe integer percent
   const percent = React.useMemo(() => Math.max(0, Math.min(100, Math.round(value))), [value])
 
   return (
@@ -197,7 +186,6 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ value, label, ariaLabel }) =>
           aria-valuemax={100}
           aria-valuenow={percent}
           aria-label={ariaLabel ?? label ?? `Progress ${percent}%`}
-          // dynamic width requires inline style
           style={{ width: `${percent}%` }}
           className="h-full bg-blue-600 transition-all duration-300"
         />
@@ -206,16 +194,10 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ value, label, ariaLabel }) =>
   )
 }
 
-/**
- * ModalDialog
- * - Simple, accessible modal with overlay click-to-close and Escape-to-close support.
- * - Focuses the close button when opened and locks body scroll.
- */
 const ModalDialog: React.FC<ModalDialogProps> = ({ open, onClose, title, children }) => {
   const overlayRef = React.useRef<HTMLDivElement | null>(null)
   const closeBtnRef = React.useRef<HTMLButtonElement | null>(null)
 
-  // Close on Escape
   React.useEffect(() => {
     if (!open) return
     const onKey = (e: KeyboardEvent) => {
@@ -225,7 +207,6 @@ const ModalDialog: React.FC<ModalDialogProps> = ({ open, onClose, title, childre
     return () => document.removeEventListener('keydown', onKey)
   }, [open, onClose])
 
-  // Lock body scroll while modal is open
   React.useEffect(() => {
     if (open) {
       const prev = document.body.style.overflow
@@ -237,7 +218,6 @@ const ModalDialog: React.FC<ModalDialogProps> = ({ open, onClose, title, childre
     return
   }, [open])
 
-  // Focus close button when opened
   React.useEffect(() => {
     if (open) {
       closeBtnRef.current?.focus()
@@ -264,22 +244,36 @@ const ModalDialog: React.FC<ModalDialogProps> = ({ open, onClose, title, childre
         className="bg-white w-full max-w-lg rounded-lg shadow-lg ring-1 ring-black/5"
       >
         <div className="flex items-start justify-between p-4 border-b">
-          {title ? <h3 id="modal-title" className="text-lg font-semibold text-gray-800">{title}</h3> : <span />}
+          {title ? (
+            <h3 id="modal-title" className="text-lg font-semibold text-gray-800">
+              {title}
+            </h3>
+          ) : (
+            <span />
+          )}
           <button
             ref={closeBtnRef}
             onClick={onClose}
             aria-label="Close dialog"
             className="ml-4 inline-flex items-center justify-center rounded-md p-2 text-gray-500 hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
           >
-            <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor" aria-hidden>
-              <path fillRule="evenodd" d="M10 8.586l4.95-4.95 1.414 1.414L11.414 10l4.95 4.95-1.414 1.414L10 11.414l-4.95 4.95-1.414-1.414L8.586 10 3.636 5.05 5.05 3.636 10 8.586z" clipRule="evenodd" />
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-5"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 8.586l4.95-4.95 1.414 1.414L11.414 10l4.95 4.95-1.414 1.414L10 11.414l-4.95 4.95-1.414-1.414L8.586 10 3.636 5.05 5.05 3.636 10 8.586z"
+                clipRule="evenodd"
+              />
             </svg>
           </button>
         </div>
 
-        <div className="p-4">
-          {children}
-        </div>
+        <div className="p-4">{children}</div>
       </div>
     </div>
   )
@@ -312,7 +306,8 @@ const ModalExample = () => {
 
       <ModalDialog open={isOpen} onClose={close} title="Example Modal">
         <p className="text-sm text-gray-700">
-          This modal demonstrates open/close state, a visible close button, overlay click-to-close, and Escape handling.
+          This modal demonstrates open/close state, a visible close button, overlay click-to-close,
+          and Escape handling.
         </p>
 
         <div className="mt-4 flex justify-end space-x-2">
@@ -325,7 +320,6 @@ const ModalExample = () => {
 
           <button
             onClick={() => {
-              // placeholder for confirm action
               alert('Confirmed (demo)')
               close()
             }}
@@ -349,21 +343,24 @@ export default function Module4Practice() {
       <div className="max-w-4xl mx-auto">
         <header className="mb-8">
           <h1 className="text-4xl font-bold mb-2">Module 4: Project Rules</h1>
-          <p className="text-gray-600">Teach Copilot to follow your coding voice and style (Agent Mode)</p>
+          <p className="text-gray-600">
+            Teach Copilot to follow your coding voice and style (Agent Mode)
+          </p>
         </header>
 
-        {/* LESSON 4.1 — Create Rules File */}
+        {/* LESSON 4.1 - Create Rules File */}
         <section className="bg-white p-6 rounded-lg shadow mb-10">
-          <h2 className="text-2xl font-semibold mb-4">Lesson 4.1 — Setting Up Your Rules File</h2>
+          <h2 className="text-2xl font-semibold mb-4">Lesson 4.1 - Setting Up Your Rules File</h2>
           <p className="text-gray-700 mb-4">
-            Your project rules live in <code>.github/copilot-instructions.md</code>. Once created, Copilot automatically
-            uses these instructions whenever you write or edit code in this repo.
+            Your project rules live in <code>.github/copilot-instructions.md</code>. Once created,
+            Copilot automatically uses these instructions whenever you write or edit code in this
+            repo.
           </p>
 
           <div className="bg-gray-50 p-4 rounded border text-sm text-gray-800 mb-4">
             <p className="font-semibold mb-2">Recommended rules:</p>
             <pre className="bg-white p-4 rounded border text-sm text-gray-800 overflow-x-auto">
-{`# Copilot Instructions
+              {`# Copilot Instructions
 
 - Use React functional components with arrow functions.
 - Write TypeScript types or interfaces for component props and state.
@@ -376,34 +373,52 @@ export default function Module4Practice() {
           </div>
 
           <p className="text-gray-700">
-            Save your rules file, then move on to the next section to validate that Copilot follows them in Agent Mode.
+            Save your rules file, then move on to the next section to validate that Copilot follows
+            them in Agent Mode.
           </p>
         </section>
 
-        {/* LESSON 4.2 — Test Rules with Agent Mode */}
+        {/* LESSON 4.2 - Test Rules with Agent Mode */}
         <section className="bg-white p-6 rounded-lg shadow mb-10 border-l-4 border-blue-400">
-          <h2 className="text-2xl font-semibold mb-4">Lesson 4.2 — Testing Your Rules (Agent Mode)</h2>
+          <h2 className="text-2xl font-semibold mb-4">
+            Lesson 4.2 - Testing Your Rules (Agent Mode)
+          </h2>
           <p className="text-gray-700 mb-4">
-            Use the practice area below to **direct Copilot (Agent Mode)** to scaffold real features. Each task should
-            naturally follow your rules: arrow functions, TypeScript types, Tailwind classes, and minimal, purposeful comments.
+            Use the practice area below to direct Copilot (Agent Mode) to scaffold real features.
+            Each task should naturally follow your rules: arrow functions, TypeScript types,
+            Tailwind classes, and minimal, purposeful comments.
           </p>
 
           <div className="border-2 border-blue-400 rounded p-4 bg-blue-50">
-            <h3 className="font-semibold mb-2 text-gray-800">Practice Area — Agent Tasks</h3>
-            <p className="text-sm text-gray-600 mb-4">Add a comment below and run the task with Copilot (Agent Mode):</p>
+            <h3 className="font-semibold mb-2 text-gray-800">Practice Area - Agent Tasks</h3>
+            <p className="text-sm text-gray-600 mb-4">
+              Add a comment below and run the task with Copilot (Agent Mode):
+            </p>
 
             <ul className="list-disc list-inside text-sm text-gray-700 mb-4 space-y-1">
               <li>
-                <code>// Scaffold a LoginForm with email, password, and submit button. Client-side validation, Tailwind styling, accessible labels.</code>
+                <code>
+                  Scaffold a LoginForm with email, password, and submit button. Client-side
+                  validation, Tailwind styling, accessible labels.
+                </code>
               </li>
               <li>
-                <code>// Build a ProfileCard with avatar image, name, bio, and a "Contact" button. Keep layout responsive and concise.</code>
+                <code>
+                  Build a ProfileCard with avatar image, name, bio, and a Contact button. Keep
+                  layout responsive and concise.
+                </code>
               </li>
               <li>
-                <code>// Create a PrimaryButton component (props: children, onClick, type?). Apply our standard Tailwind button style.</code>
+                <code>
+                  Create a PrimaryButton component (props: children, onClick, type?). Apply our
+                  standard Tailwind button style.
+                </code>
               </li>
               <li>
-                <code>// Implement a simple SearchBar with input, clear button, and debounced onChange callback (300ms).</code>
+                <code>
+                  Implement a simple SearchBar with input, clear button, and debounced onChange
+                  callback (300ms).
+                </code>
               </li>
             </ul>
 
@@ -416,42 +431,56 @@ export default function Module4Practice() {
               <li>Accessible markup for inputs and controls</li>
             </ul>
 
-            {/* Practice area for Copilot (Agent Mode) generation */}
             <LoginForm />
           </div>
         </section>
 
-        {/* LESSON 4.3 — Consistency Across Multiple Components */}
+        {/* LESSON 4.3 - Consistency Across Multiple Components */}
         <section className="bg-white p-6 rounded-lg shadow mb-10 border-l-4 border-green-400">
-          <h2 className="text-2xl font-semibold mb-4">Lesson 4.3 — Consistency Across Components</h2>
+          <h2 className="text-2xl font-semibold mb-4">
+            Lesson 4.3 - Consistency Across Components
+          </h2>
           <p className="text-gray-700 mb-4">
-            Generate multiple components and verify that Copilot keeps your rules consistent across different feature shapes.
+            Generate multiple components and verify that Copilot keeps your rules consistent across
+            different feature shapes.
           </p>
 
           <div className="border-2 border-green-400 rounded p-4 bg-green-50">
             <p className="text-sm text-gray-700 mb-4">Agent tasks to try one-by-one:</p>
             <ul className="list-disc list-inside text-sm text-gray-700 mb-4 space-y-1">
               <li>
-                <code>// Create a NotificationBadge (props: count, maxCount?) that displays "99+" when over max.</code>
+                <code>
+                  Create a NotificationBadge (props: count, maxCount?) that displays 99+ when over
+                  max.
+                </code>
               </li>
               <li>
-                <code>// Create a ProgressBar (props: value 0–100, label?). Include accessible markup for screen readers.</code>
+                <code>
+                  Create a ProgressBar (props: value 0-100, label?). Include accessible markup for
+                  screen readers.
+                </code>
               </li>
               <li>
-                <code>// Create a ModalDialog (props: open, onClose, title). Include a close button and focus trap note in comments.</code>
+                <code>
+                  Create a ModalDialog (props: open, onClose, title). Include a close button and
+                  focus trap note in comments.
+                </code>
               </li>
               <li>
-                <code>// Create a DataTable shell (columns prop, rows prop). Responsive table layout with Tailwind utilities.</code>
+                <code>
+                  Create a DataTable shell (columns prop, rows prop). Responsive table layout with
+                  Tailwind utilities.
+                </code>
               </li>
             </ul>
 
             <p className="text-sm text-gray-700">
-              After each generation, check for rule adherence (arrow functions, typed props, Tailwind rhythm, minimal comments). If anything drifts,
-              adjust <code>.github/copilot-instructions.md</code> and retry the task.
+              After each generation, check for rule adherence (arrow functions, typed props,
+              Tailwind rhythm, minimal comments). If anything drifts, adjust{' '}
+              <code>.github/copilot-instructions.md</code> and retry the task.
             </p>
           </div>
 
-          {/* Example usages demonstrating different sizes and threshold behavior */}
           <div className="flex items-center space-x-4 mt-4">
             <div className="flex items-center space-x-2">
               <span className="text-gray-700">Messages</span>
@@ -469,7 +498,6 @@ export default function Module4Practice() {
             </div>
           </div>
 
-          {/* Example usages */}
           <div className="mt-4 space-y-4">
             <ProgressBar label="Upload" value={18} />
             <ProgressBar label="Processing" value={64} />
@@ -479,16 +507,17 @@ export default function Module4Practice() {
           </div>
         </section>
 
-        {/* LESSON 4.4 — Refining and Expanding Rules */}
+        {/* LESSON 4.4 - Refining and Expanding Rules */}
         <section className="bg-white p-6 rounded-lg shadow mb-10 border-l-4 border-purple-400">
-          <h2 className="text-2xl font-semibold mb-4">Lesson 4.4 — Refining and Expanding Rules</h2>
+          <h2 className="text-2xl font-semibold mb-4">Lesson 4.4 - Refining and Expanding Rules</h2>
           <p className="text-gray-700 mb-4">
-            As your project grows, evolve your rules with specific, reusable patterns so Agent Mode drafts match your voice without reminders.
+            As your project grows, evolve your rules with specific, reusable patterns so Agent Mode
+            drafts match your voice without reminders.
           </p>
 
           <p className="text-gray-700 mb-4">Examples you can add to your rules file:</p>
           <pre className="bg-gray-50 p-4 rounded border text-sm text-gray-800 overflow-x-auto mb-4">
-{`- Primary button style: 'px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60'.
+            {`- Primary button style: 'px-4 py-2 rounded-md text-white bg-blue-600 hover:bg-blue-700 active:bg-blue-800 disabled:opacity-60'.
 - Form inputs: use label + id + aria-describedby; include error text with role="alert".
 - Components over ~25 lines: extract helpers; keep render paths simple and readable.
 - Prefer composition over prop drilling; create small utilities/hooks for repeated logic.
@@ -496,7 +525,8 @@ export default function Module4Practice() {
           </pre>
 
           <p className="text-gray-700">
-            Keep the file updated as your standards change. Copilot will follow the latest version across all Agent Mode tasks.
+            Keep the file updated as your standards change. Copilot will follow the latest version
+            across all Agent Mode tasks.
           </p>
         </section>
 
@@ -504,10 +534,21 @@ export default function Module4Practice() {
         <section className="mt-10 bg-gradient-to-r from-blue-50 to-purple-50 p-6 rounded-lg">
           <h2 className="text-2xl font-semibold mb-4 text-gray-800">Key Takeaways</h2>
           <ul className="space-y-2 text-gray-700">
-            <li><strong>Define once, follow everywhere.</strong> Copilot reads your rules automatically.</li>
-            <li><strong>Direct with Agent Mode.</strong> Use bigger tasks to see your rules applied in realistic code.</li>
-            <li><strong>Refine as you go.</strong> When you see drift, clarify the rule and retry.</li>
-            <li><strong>Keep it modular.</strong> Small components + typed props + Tailwind rhythm = consistent output.</li>
+            <li>
+              <strong>Define once, follow everywhere.</strong> Copilot reads your rules
+              automatically.
+            </li>
+            <li>
+              <strong>Direct with Agent Mode.</strong> Use bigger tasks to see your rules applied
+              in realistic code.
+            </li>
+            <li>
+              <strong>Refine as you go.</strong> When you see drift, clarify the rule and retry.
+            </li>
+            <li>
+              <strong>Keep it modular.</strong> Small components + typed props + Tailwind rhythm =
+              consistent output.
+            </li>
           </ul>
         </section>
       </div>
